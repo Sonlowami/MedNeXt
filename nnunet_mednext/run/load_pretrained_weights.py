@@ -65,7 +65,7 @@ def load_pretrained_weights_notstrict(network, fname, verbose=False):
     """
     THIS DOES NOT TRANSFER SEGMENTATION HEADS!
     """
-    saved_model = torch.load(fname)
+    saved_model = torch.load(fname, weights_only=False)
     pretrained_dict = saved_model['state_dict']
 
     new_state_dict = {}
@@ -112,7 +112,7 @@ def load_pretrained_weights_resampling(network, fname, verbose=False):
 
     print("################### Resampled Loading pretrained weights from file ", fname, '###################')
     
-    saved_model = torch.load(fname)
+    saved_model = torch.load(fname, weights_only=False)
     pretrained_dict = saved_model['state_dict']
 
     # if state dict comes from nn.DataParallel but we use non-parallel model here then the state dict keys do not

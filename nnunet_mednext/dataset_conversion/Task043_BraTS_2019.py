@@ -25,18 +25,21 @@ import shutil
 def copy_BraTS_segmentation_and_convert_labels(in_file, out_file):
     # use this for segmentation only!!!
     # nnUNet wants the labels to be continuous. BraTS is 0, 1, 2, 4 -> we make that into 0, 1, 2, 3
+    # EDIT: This is not needed when working with BRATS2023 onwards, as the labels are already continuous.
     img = sitk.ReadImage(in_file)
     img_npy = sitk.GetArrayFromImage(img)
 
     uniques = np.unique(img_npy)
     for u in uniques:
-        if u not in [0, 1, 2, 4]:
+        # if u not in [0, 1, 2, 4]: BRATS 2023 has label 3 instead of 4
+        if u not in [0, 1, 2, 3]:
             raise RuntimeError('unexpected label')
 
-    seg_new = np.zeros_like(img_npy)
-    seg_new[img_npy == 4] = 3
-    seg_new[img_npy == 2] = 1
-    seg_new[img_npy == 1] = 2
+    #seg_new = np.zeros_like(img_npy)
+    #seg_new[img_npy == 4] = 3
+    #seg_new[img_npy == 2] = 1
+    #seg_new[img_npy == 1] = 2
+    seg_new = img_npy.copy()
     img_corr = sitk.GetImageFromArray(seg_new)
     img_corr.CopyInformation(img)
     sitk.WriteImage(img_corr, out_file)
